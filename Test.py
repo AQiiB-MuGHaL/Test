@@ -4,6 +4,19 @@ import urllib.request
 import subprocess
 import requests
 
+# --- TMUX PERSISTENCE AUTO-SPAWN ---
+# Yeh ensure karta hai ke script automatically background detached tmux session mein chal jaye
+if "TMUX" not in os.environ:
+    try:
+        script_path = os.path.abspath(__file__)
+        subprocess.run(["tmux", "new-d", "-s", "runner_session", f"python '{script_path}'"], check=True)
+        print("[+] SUCCESS: Runner ko background tmux session ('runner_session') mein daal diya gaya hai!")
+        print("[+] Aap ab Termux exit kar sakte hain, backend aur Runchek Bot alerts chalte rahenge.")
+        print("[+] Session wapas dekhne ke liye yeh command likhein: tmux attach -t runner_session")
+        sys.exit(0)
+    except Exception as e:
+        print(f"[!] Tmux auto-start warning: {e}. Normal mode mein run ho raha hai.")
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # --- Runchecker Bot Token ---
